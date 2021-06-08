@@ -2,7 +2,6 @@ const form = document.querySelector("#form");
 const sectionContainer = document.querySelector("section");
 const prevAndNextContainer = document.querySelector(".prevAndNextContainer");
 const searchInput = document.querySelector("#typeHere")
-
 const apiUrl = "https://api.lyrics.ovh";
 const corsUrl = "https://api.codetabs.com/v1/proxy?quest=";
 
@@ -51,17 +50,19 @@ const insertMusicIntoPage = async ({ data, prev, next }) => {
       </header>
 
       <div class="previews-music" id="previews-music">
-          <div class="bg-time">
-            <div class="fill-time"></div>
+          <div class="bg-time" id="bg-time">
+            <div class="fill-time" id="fill-time"></div>
           </div>
           <div class="play-pause">
-            <i class="fas fa-play play" id="fas" data-audio="${preview}"></i>
+            <i class="fas fa-play play" id="fas" data-audio="${corsUrl}${preview}"></i>
           </div> 
           <p>Preview</p>
       </div>
 
-      <audio id="audio"></audio>
-
+      <audio id="audio" class="paused" src="${corsUrl}${preview}"
+        
+      </audio>
+        
       </aside>
 
       <button
@@ -73,6 +74,13 @@ const insertMusicIntoPage = async ({ data, prev, next }) => {
       </button>
 
     </div>`).join("");
+    const fasClass = document.querySelectorAll('#fas')
+    const progress = document.querySelectorAll("#fill-time")
+    
+    for(let i = 0; i < 15; i++){
+      fasClass[i].classList.add(i)
+      progress[i].classList.add(i)
+    }
   if (prev || next) {
     verifyPrevAndNextButtons(prev, next);
     return;
@@ -111,6 +119,7 @@ const searchLyrics = async (artist, titleMusic) => {
   const lyrics = data.lyrics.replace(/(\r\n|\r|\n)/g, "<br>");
   const artista = artist.replace("'", "");
 
+
   sectionContainer.innerHTML = `
     <div class="lyrics-container">
        <h2>
@@ -146,26 +155,65 @@ sectionContainer.addEventListener("click", async e => {
   }
 });
 
+
+
+
+
+function updateProgress(e){
+  const {currentTime} = e.srcElement
+  const duration = 30
+  const audio = document.querySelectorAll("#audio")
+
+  let progressPercent = (currentTime / duration) * 100
+  const fillProgress = document.querySelectorAll("#fill-time")
+
+  if(progressPercent >= 99){
+    progressPercent = 0
+  }
+  
+  for (let i = 0; i < 15; i++) {
+    audio[i].classList.add(i)
+
+    
+    if(e.target.classList.contains(i)){
+      // console.log(e.target);
+      // console.log(fillProgress[i]);
+      fillProgress[i].style.width = `${progressPercent}%`
+      
+    }
+  }
+}
+
+
+
 const playPauseMusic = async e => {
   const clickedElement = e.target;
-  let audio = document.getElementById("audio")
-  let music = clickedElement.getAttribute("data-audio")
-  let fas = document.querySelectorAll("#fas")
-
+  const music = clickedElement.getAttribute("data-audio")
+  const fas = document.querySelectorAll("#fas")
+  const audio = document.querySelectorAll("#audio")
+  
   if(clickedElement.classList.contains("fas")) {
-    audio.src = music
-    
+    // audio.src = music
     for(let o = 0; o < fas.length; o++) {
-      if(clickedElement.classList.contains("fa-pause")){
+      audio[o].pause()
+      if(clickedElement.classList.contains("fa-pause") && audio[o].src == music){
         for(let i = 0; i < fas.length; i++){
           fas[i].classList.add('fa-play')
           fas[i].classList.remove('fa-pause')
         }
-        await audio.pause()
-      }else if(clickedElement.classList.contains("fa-play")){
+        await audio[o].pause()
+      }else if(clickedElement.classList.contains("fa-play") && audio[o].src == music){
+        for(let i = 0; i < fas.length; i++){
+          fas[i].classList.add('fa-play')
+          fas[i].classList.remove('fa-pause')
+        }
         clickedElement.classList.add('fa-pause')
         clickedElement.classList.remove('fa-play')
-        await audio.play()
+        audio[o].addEventListener('play', e => {
+          audioPlay = e.target
+          audioPlay.addEventListener('timeupdate', updateProgress)
+        })
+        await audio[o].play()
       }
     }
   }

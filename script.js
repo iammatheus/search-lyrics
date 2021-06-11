@@ -35,7 +35,6 @@ const verifyPrevAndNextButtons = (prev, next) => {
 const insertMusicIntoPage = async ({ data, prev, next }) => {
   clearSearchInput();
 
-  sectionContainer.style.display = "flex";
   sectionContainer.innerHTML = await data.map((
     { artist:{ name }, album:{ cover_medium:img_album }, album:{title:title_album}, title, preview }) => 
   `<div class="artist-container">  
@@ -73,13 +72,17 @@ const insertMusicIntoPage = async ({ data, prev, next }) => {
       </button>
 
     </div>`).join("");
-  const fasClass = await document.querySelectorAll('#fas')
-  const progress = document.querySelectorAll("#fill-time")
-    
+
+  /* Código "for" necessário para que ao setar o tempo da música o 
+     progresso da barra e a música não voltem para o início */
+  var fasClass = document.querySelectorAll('#fas')
+  var progress = document.querySelectorAll("#fill-time")
+
   for(let i = 0; i < 15; i++){
     fasClass[i].classList.add(i)
     progress[i].classList.add(i)
   }
+
   if (prev || next) {
     verifyPrevAndNextButtons(prev, next);
     return;
@@ -103,11 +106,12 @@ form.addEventListener("submit", (e) => {
 
   const searchTerm = searchInput.value.trim().replaceAll("/"," ")
 
-  if (!searchTerm) {
+  if(!searchTerm) {
     warningMessage(
       "Por favor, preencha o campo acima ou insira um termo válido!"
     );
     clearPrevAndNextContainer();
+    clearSearchInput()
     return;
   }
   searchMusic(searchTerm);
@@ -129,17 +133,7 @@ const searchLyrics = async (artist, titleMusic) => {
   `;
 };
 
-function scrollTop(e){
-  const id = e.getAttribute('href')
-  const to = document.querySelector(id).offsetTop
-
-  window.scroll({
-     top: to,
-     behavior: "smooth"
-  })
-}
-
-sectionContainer.addEventListener("click", async e => {
+async function getAndShowLyrics(e){
   const clickedElement = e.target;
 
   if (clickedElement.tagName === "BUTTON") {
@@ -150,7 +144,8 @@ sectionContainer.addEventListener("click", async e => {
     scrollTop(clickedElement)
     clearPrevAndNextContainer();
   }
-});
+}
+sectionContainer.addEventListener("click", getAndShowLyrics);
 
 function updateProgress(e){
   const {currentTime} = e.srcElement
@@ -160,12 +155,12 @@ function updateProgress(e){
 
   const progressPercent = (currentTime / duration) * 100
 
-  for (let i = 0; i < audio.length; i++) {
+  for(let i = 0; i < audio.length; i++) {
     audio[i].classList.add(i)
     if(e.target.classList.contains(i)){
       fillProgress[i].style.width = `${progressPercent}%`
     }
-    if(audio[i].ended && progressPercent >= 99){
+    if(audio[i].ended && progressPercent >= 99.5){
       fas[i].classList.add('fa-play')
       fas[i].classList.remove('fa-pause')
     }
@@ -194,7 +189,6 @@ const playPauseMusic = async e => {
   const fas = document.querySelectorAll("#fas")
   const audio = document.querySelectorAll("#audio")
   const progressContainer = document.querySelectorAll('#bg-time')
-
   
   if(clickedElement.classList.contains("fas")) {
     for(let o = 0; o < fas.length; o++) {
@@ -226,9 +220,17 @@ const playPauseMusic = async e => {
         progressContainer[o].addEventListener('click', setProgress)
         await audio[o].play()
       }
-      
     }
   }
 }
-
 sectionContainer.addEventListener("click", playPauseMusic);
+
+function scrollTop(e){
+  const id = e.getAttribute('href')
+  const to = document.querySelector(id).offsetTop
+
+  window.scroll({
+     top: to,
+     behavior: "smooth"
+  })
+}

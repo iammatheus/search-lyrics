@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./style.css" />
-    <title>Search Lyrics</title>
-  </head>
 
-  <body>
-    <main>
-      <header class="search-container" id="top">
-        <form id="form">
-          <input type="text" id="typeHere" autofocus value="AC/DC" />
-          <button id="search">Pesquisar</button>
-        </form>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Matheus Ferreira">
+  <meta name="description" content="Buscar letras de músicas">
+  <meta name="keywords" content="buscar, letras, músicas, artistas">
+  <link rel="stylesheet" href="./style.css" />
+  <title>Search Lyrics</title>
+</head>
 
-      <section>
-        <div class="artist-container">
-         
-        </div>
-        
-        <div class="lyrics-container">
-         
-        </div>
-      </section>
+<body>
+  <main>
+    <header class="search-container" id="top">
+      <form id="form">
+        <input 
+          autofocus 
+          type="text" 
+          id="typeHere" 
+          placeholder="Insira o nome da música ou do artista" />
+        <button id="search">Pesquisar</button>
+      </form>
+    </header>
 
-      <footer class="prevAndNextContainer">
+    <section>
+      <div class="artist-container">
 
-      </footer>
-    </main>
-    <script
-      src="https://kit.fontawesome.com/308a12915f.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="script.js"></script>
-  </body>
+      </div>
+
+      <div class="lyrics-container">
+
+      </div>
+    </section>
+
+    <footer class="prevAndNextContainer">
+
+    </footer>
+  </main>
+  <script src="https://kit.fontawesome.com/308a12915f.js" crossorigin="anonymous"></script>
+  <script src="script.js"></script>
+</body>
+
 </html>
